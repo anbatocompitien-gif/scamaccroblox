@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Đăng Nhập HTML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        hr {
+            margin: 25px 0;
+            border: 0;
+            border-top: 1px solid #ccc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .empty-row {
+            text-align: center;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Đăng Nhập Hệ Thống</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="username">Tài khoản:</label>
+            <input type="text" id="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Mật khẩu:</label>
+            <input type="password" id="password" required>
+        </div>
+        <button type="submit">Đăng nhập</button>
+    </form>
+
+    <hr>
+
+    <h3>Danh sách tài khoản đã nhập</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tài khoản</th>
+                <th>Mật khẩu</th>
+            </tr>
+        </thead>
+        <tbody id="accountList">
+            <!-- Dữ liệu sẽ được render vào đây -->
+        </tbody>
+    </table>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const accountList = document.getElementById('accountList');
+
+        // Tải danh sách từ localStorage khi vừa mở trang
+        function loadAccounts() {
+            const accounts = JSON.parse(localStorage.getItem('html_accounts')) || [];
+            accountList.innerHTML = '';
+
+            if (accounts.length === 0) {
+                accountList.innerHTML = '<tr><td colspan="2" class="empty-row">Chưa có dữ liệu.</td></tr>';
+                return;
+            }
+
+            accounts.forEach(acc => {
+                const row = document.createElement('tr');
+                
+                const userCell = document.createElement('td');
+                userCell.textContent = acc.username;
+
+                const passCell = document.createElement('td');
+                passCell.textContent = acc.password;
+
+                row.appendChild(userCell);
+                row.appendChild(passCell);
+                accountList.appendChild(row);
+            });
+        }
+
+        // Chạy ngay khi tải trang
+        loadAccounts();
+
+        // Xử lý sự kiện submit form
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Lấy danh sách hiện tại
+            let accounts = JSON.parse(localStorage.getItem('html_accounts')) || [];
+
+            // Thêm tài khoản mới vào mảng
+            accounts.push({ username: username, password: password });
+
+            // Lưu ngược lại vào localStorage
+            localStorage.setItem('html_accounts', JSON.stringify(accounts));
+
+            // Cập nhật lại giao diện bảng
+            loadAccounts();
+
+            // Xóa sạch ô nhập
+            loginForm.reset();
+        });
+    </script>
+
+</body>
+</html>
